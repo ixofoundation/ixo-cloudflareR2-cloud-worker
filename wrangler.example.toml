@@ -1,0 +1,9 @@
+name = "ixo-r2-cloud-worker"
+workers_dev = true
+
+compatibility_date = "2022-05-12"
+
+[[r2_buckets]]
+binding = 'BUCKET'
+bucket_name = 'cdn-images'
+preview_bucket_name = 'cdn-images'
