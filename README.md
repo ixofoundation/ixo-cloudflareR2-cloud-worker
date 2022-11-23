@@ -108,7 +108,7 @@ wget  https://www.bing.com/th?id=OHR.Unesco50_ZH-CN3652927413_UHD.jpg -O /tmp/1.
 ```
 2. Upload to u endpoint.
 ```
-echo '{"body" : "'"$( cat /tmp/1.jpg | base64)"'"}' | curl -XPUT -H "Content-Type: application/json" -d @-  https://change_user_here:change_pass_here@change_url_here/upload -vvv
+echo '{"body" : "'"$( cat /tmp/1.jpg | base64)"'"}' | curl -XPUT -H "Content-Type: application/json" -d @-  https://ixo:ixo@https://ixo-r2-cloud-worker.ixo-api.workers.dev/upload -vvv
 ```
 3. Visit the image
 ```
