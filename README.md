@@ -11,6 +11,7 @@ Store and Deliver images with Cloudflare R2 backend Cloudflare Workers with IPFS
 4. **r2-image-worker** will respond the key of the stored image. `abcdef.png`
 5. **r2-image-worker** serve the images on `https://ixo-r2-image-worker.username.workers.dev/abcdef.png`
 6. Images will be cached in Cloudflare CDN.
+7. Images can also be uploaded to IPFS Storage via the ipfsupload endpoint
 
 ```
 User => Image => base64 => r2-image-worker => R2
@@ -22,6 +23,7 @@ User <= Image <= r2-image-worker <= CID <= IPFS
 
 * Cloudflare Account
 * Cloudflare R2 access
+* Web3Storage Account
 * Wrangler CLI (v2)
 * Custom domain (* Cache API is not available in `*.workers.dev` domain)
 
@@ -51,12 +53,6 @@ Secret variables are:
 - `AUTHKEY` - Auth Token for basic security
 
 
-To set these, use `wrangler secret put` command:
-
-```bash
-wrangler secret put AUTHKEY
-```
-
 ## Usage
 
 Develop
@@ -83,16 +79,22 @@ Prebuild
 yarn build
 ```
 
+Add your Web3storage Secret key housed in the secret manager tool of cloudflare.
+
+```
+wrangler secret put IPFS_WORKER_TOKEN
+```
+
 ## Endpoints
 
 ### `/upload`
 
 Header:
 
-To pass the Basic Auth, add the Base64 string of "user:pass" to `Authorization` header.
+To pass the Basic Auth, add the AUTHKEY to your Bearer Auth section of `Authorization` header.
 
 ```
-Authorization: Basic ...
+Authorization: Bearer ...
 ```
 
 Body: Base64 string of image binary.

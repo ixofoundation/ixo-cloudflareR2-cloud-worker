@@ -19,7 +19,7 @@ const app = new Hono()
 
 const token = "INSERTHERE";
 
-app.use('/upload/*', bearerAuth({ token }))
+app.use('/*', bearerAuth({ token }))
 
 
 
