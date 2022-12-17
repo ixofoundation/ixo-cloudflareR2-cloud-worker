@@ -1,26 +1,27 @@
 # ixo-r2-cloud-worker
 
-Store and Deliver images with Cloudflare R2 backend Cloudflare Workers.
+Store and Deliver images with Cloudflare R2 backend Cloudflare Workers with IPFS CID integration.
 
 ## How to Run the worker
 
 1. Deploy r2-image-worker to Cloudflare
 1. Make a base64 string from the image file such as `.png`, `jpg`, or `gif`.
-2. `PUT` the base64 strings to **r2-image-worker**.
+2. `PUT` the base64 strings to **ixo-r2-image-worker**.
 3. Image binary will be stored in Cloudflare R2 storage.
 4. **r2-image-worker** will respond the key of the stored image. `abcdef.png`
-5. **r2-image-worker** serve the images on `https://r2-image-worker.username.workers.dev/abcdef.png`
+5. **r2-image-worker** serve the images on `https://ixo-r2-image-worker.username.workers.dev/abcdef.png`
 6. Images will be cached in Cloudflare CDN.
 
 ```
 User => Image => base64 => r2-image-worker => R2
 User <= Image <= r2-image-worker <= CDN Cache <= R2
+User <= Image <= r2-image-worker <= CID <= IPFS
 ```
 
 ## Prerequisites
 
 * Cloudflare Account
-* Cloudflare R2 beta access
+* Cloudflare R2 access
 * Wrangler CLI (v2)
 * Custom domain (* Cache API is not available in `*.workers.dev` domain)
 
@@ -30,7 +31,8 @@ Create R2 bucket:
 ```
 wrangler r2 bucket create cdn-images
 ```
-
+TODO RE ADD EXAMPLE TOML
+========================
 Copy `wrangler.example.toml` to `wrangler.toml`:
 
 ```
@@ -46,14 +48,13 @@ Edit `wrangler.toml`.
 
 Secret variables are:
 
-- `USER` - User name of basic auth
-- `PASS` - User password of basic auth
+- `AUTHKEY` - Auth Token for basic security
+
 
 To set these, use `wrangler secret put` command:
 
 ```bash
-wrangler secret put USER
-wrangler secret put PASS
+wrangler secret put AUTHKEY
 ```
 
 ## Usage
@@ -102,10 +103,7 @@ Body: Base64 string of image binary.
 }
 ```
 ### Test
-1. Download a simple image
-```
-wget  https://www.bing.com/th?id=OHR.Unesco50_ZH-CN3652927413_UHD.jpg -O /tmp/1.jpg
-```
+1. Grab any common image with common extension type.
 2. Upload to u endpoint.
 ```
 echo '{"body" : "'"$( cat /tmp/1.jpg | base64)"'"}' | curl -XPUT -H "Content-Type: application/json" -d @-  https://ixo:ixo@https://ixo-r2-cloud-worker.ixo-api.workers.dev/upload -vvv

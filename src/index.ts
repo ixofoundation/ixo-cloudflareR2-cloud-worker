@@ -1,13 +1,13 @@
 import { Hono } from 'hono'
 import { cache } from 'hono/cache'
 import { sha256 } from 'hono/utils/crypto'
-import { basicAuth } from 'hono/basic-auth'
-import { detectType,GenerateCID } from './utils'
 
+import { detectType,GenerateCID } from './utils'
+import { bearerAuth } from 'hono/bearer-auth'
+
+import { web3StoreFile } from './web3storage.helper'
 export interface Bindings {
   BUCKET: R2Bucket
-  USER: string
-  PASS: string
 }
 
 interface Data {
@@ -17,9 +17,30 @@ interface Data {
 const maxAge = 60 * 60 * 24 * 30;
 const app = new Hono()
 
-app.put('/upload', async (c, next) => {
-  const auth = basicAuth({ username: c.env.USER, password: c.env.PASS })
-  await auth(c, next)
+const token = "INSERTHERE";
+
+app.use('/upload/*', bearerAuth({ token }))
+
+
+
+app.put('/ipfsupload', async (c) => {
+  const data = await c.req.json<{base64,mimetype}>();
+
+  const base64 = data.base64;
+  const mimetype = data.mimetype;
+
+
+  const body = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0))
+
+  const key = await sha256(body);
+
+  const file = new File([body], key, {type: mimetype});
+
+ const cid = await web3StoreFile( c.env.IPFS_WORKER_TOKEN,file );
+ 
+  
+  return c.json({ meta: key, cid:cid })  
+
 })
 
 app.put('/upload', async (c) => {
@@ -44,7 +65,7 @@ app.put('/upload', async (c) => {
 app.get(
   '*',
   cache({
-    cacheName: 'r2-image-worker',
+    cacheName: 'ixo-r2-image-worker',
   })
 )
 
