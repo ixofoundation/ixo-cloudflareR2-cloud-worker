@@ -106,7 +106,7 @@ Body: Base64 string of image binary.
 ```
 ### Test
 1. Grab any common image with common extension type.
-2. Upload to u endpoint.
+2. Upload to upload endpoint.
 ```
 echo '{"body" : "'"$( cat /tmp/1.jpg | base64)"'"}' | curl -XPUT -H "Content-Type: application/json" -d @-  https://ixo:ixo@https://ixo-r2-cloud-worker.ixo-api.workers.dev/upload -vvv
 ```
