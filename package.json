@@ -7,7 +7,7 @@
     "deploy": "wrangler publish ./src/index.ts",
     "build": "wrangler publish --dry-run --outdir=dist"
   },
-  "license": "MIT",
+  "license": "Apache 2",
   "dependencies": {
     "hono": "^2.3.0",
     "multiformats": "^10.0.2"
